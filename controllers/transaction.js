@@ -33,7 +33,7 @@ exports.readAllByAccount = async (req, res) => {
 }
 
 exports.update = async (req, res) => {
-  const { transactionId } = req.params
+  const transactionId = req.params.id
   try {
     const transaction = await Transaction.findOneAndUpdate({ _id: transactionId }, req.body).exec()
 
@@ -48,13 +48,13 @@ exports.update = async (req, res) => {
 }
 
 exports.delete = async (req, res) => {
-  const { transactionId } = req.params
+  const transactionId = req.params.id
   try {
     const account = await Transaction.findOneAndDelete({ _id: transactionId })
     if (!account) {
       return res.status(404).json({ message: 'Ligne non trouvée' })
     }
-    res.status(204).send()
+    res.status(204).json({ message: 'la ligne a bien étée supprimée' })
   } catch (error) {
     res.status(500).json({ message: 'Impossible de supprimer la ligne', error: error.message })
   }
