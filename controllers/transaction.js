@@ -28,11 +28,9 @@ const checkUserAccess = async (match, userId) => {
             },
         },
     ])
-
-    if (lines.length === 0) {
-        return false
-    }
-        return lines
+    console.log(lines)
+    lines.length === 0 ? false : lines
+    return lines
 }
 
 exports.readAllByAccount = async (req, res) => {
@@ -46,7 +44,6 @@ exports.readAllByAccount = async (req, res) => {
         },
         req.auth.userId
       )
-      console.log(transactions)
 
       if (!transactions) {
         return res.status(404).json({ message: "Aucune ligne récupérable" })
