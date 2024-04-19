@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const uniqueValidator = require("mongoose-unique-validator");
 
 const transactionSchema = new mongoose.Schema({
   label: {
@@ -49,12 +48,10 @@ const transactionSchema = new mongoose.Schema({
   },
 });
 
-transactionSchema.pre('save', async function (next) {
+transactionSchema.pre('validate', async function (next) {
   this.lastUpdated = Date.now()
   next()
 })
 
-transactionSchema.plugin(uniqueValidator, { message: '{PATH} doit être unique.' });
 const Transaction = mongoose.model('Transaction', transactionSchema);
-
 module.exports = Transaction;
