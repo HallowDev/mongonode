@@ -48,10 +48,5 @@ const transactionSchema = new mongoose.Schema({
   },
 });
 
-transactionSchema.pre('validate', async function (next) {
-  this.lastUpdated = Date.now()
-  next()
-})
-
 const Transaction = mongoose.model('Transaction', transactionSchema);
 module.exports = Transaction;

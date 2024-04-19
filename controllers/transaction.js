@@ -1,15 +1,61 @@
-exports.readAllByAccount = (req, res) => {
-    res.send("Welcome to account-line readAllByAccount")
+const Transaction = require('../models/transaction')
+
+exports.create = async (req, res) => {
+  const { accountId } = req.params
+  try {
+    const newTransaction = new Transaction({
+      ...req.body,
+      accountId
+    })
+    newTransaction.save()
+    res.status(201).json(newTransaction)
+  } catch (error) {
+    res.status(500).json({ message: 'Impossible de créer la ligne', error: error.message })
+  }
 }
 
-exports.create = (req, res) => {
-    res.send("Welcome to account-line create")
+exports.readAllByAccount = async (req, res) => {
+  const { accountId } = req.params
+  try {
+    const transactions = await Transaction.find({ accountId }).populate('accountId')
+    transactions.forEach(transaction => {
+      if (transaction.accountId.userId.toString() !== req.auth.userId) {
+        res.status(401).json({ message: 'Requête non autorisée' })
+      }
+    })
+    res.status(200).json({
+        transactions
+    })
+  } catch (error) {
+    res.status(500).json({ message: 'Impossible de lire les lignes', error: error.message })
+
+  }
 }
 
-exports.update = (req, res) => {
-    res.send("Welcome to account-line update")
+exports.update = async (req, res) => {
+  const { transactionId } = req.params
+  try {
+    const transaction = await Transaction.findOneAndUpdate({ _id: transactionId }, req.body).exec()
+
+    if (!transaction) {
+      return res.status(404).json({ message: 'Ligne de compte non trouvée' })
+    }
+
+    res.status(200).json({ message: 'Ligne de compte mise à jour avec succès', transaction })
+  } catch (error) {
+    res.status(500).json({ message: 'Impossible de mettre à jour la ligne de compte', error: error.message })
+  }
 }
 
-exports.delete = (req, res) => {
-    res.send("Welcome to account-line delete")
+exports.delete = async (req, res) => {
+  const { transactionId } = req.params
+  try {
+    const account = await Transaction.findOneAndDelete({ _id: transactionId })
+    if (!account) {
+      return res.status(404).json({ message: 'Ligne non trouvée' })
+    }
+    res.status(204).send()
+  } catch (error) {
+    res.status(500).json({ message: 'Impossible de supprimer la ligne', error: error.message })
+  }
 }
