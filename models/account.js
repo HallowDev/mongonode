@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const uniqueValidator = require("mongoose-unique-validator");
 const Transaction = require('./transaction')
 
 const accountSchema = new mongoose.Schema({
@@ -23,7 +22,7 @@ const accountSchema = new mongoose.Schema({
   },
 });
 
-accountSchema.pre('save', function (next) {
+accountSchema.pre('validate', function (next) {
   this.lastUpdated = Date.now()
   next()
 })
@@ -43,6 +42,5 @@ accountSchema.pre('findByIdAndDelete', async function (next) {
   }
 })
 
-accountSchema.plugin(uniqueValidator, { message: '{PATH} doit être unique.' });
 const Account = mongoose.model('Account', accountSchema);
 module.exports = Account;
