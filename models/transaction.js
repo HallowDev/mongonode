@@ -49,7 +49,7 @@ const transactionSchema = new mongoose.Schema({
   },
 });
 
-transactionSchema.plugin(uniqueValidator);
+transactionSchema.plugin(uniqueValidator, { message: '{PATH} doit être unique.' });
 const Transaction = mongoose.model('Transaction', transactionSchema);
 
 module.exports = Transaction;

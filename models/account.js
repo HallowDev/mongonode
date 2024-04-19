@@ -21,7 +21,6 @@ const accountSchema = new mongoose.Schema({
     required: [true, "Veuillez fournir un identifiant d'utilisateur"],
   },
 });
-accountSchema.plugin(uniqueValidator);
-const Account = mongoose.model('Account', accountSchema);
 
+accountSchema.plugin(uniqueValidator, { message: '{PATH} doit être unique.' });
 module.exports = Account;
