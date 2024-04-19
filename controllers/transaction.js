@@ -1,6 +1,65 @@
 const Transaction = require('../models/transaction')
+const mongoose = require("mongoose")
 
-exports.create = async (req, res) => {
+const checkUserAccess = async (match, userId) => {
+    const lines = await Transaction.aggregate([
+        {
+            $match: match,
+        },
+        {
+            $lookup: {
+                from: "accounts",
+                localField: "accountId",
+                foreignField: "_id",
+                as: "accountDetails",
+            },
+        },
+        {
+            $unwind: "accountDetails",
+        },
+        {
+            $match: {
+                "accountDetails.userId": mongoose.Types.ObjectId.createFromHexString(userId),
+            },
+        },
+        {
+            $project: {
+                accountDetails: 0,
+            },
+        },
+    ])
+
+    if (lines.length === 0) {
+        return false
+    }
+        return lines
+}
+
+exports.readAllByAccount = async (req, res) => {
+    const { accountId } = req.params
+    try {
+      const transactions = await checkUserAccess(
+        {
+            accountId: mongoose.Types.ObjectId.createFromHexString(
+                accountId
+            )
+        },
+        req.auth.userId
+      )
+
+      if (!transactions) {
+        return res.status(404).json({ message: "Aucune ligne récupérable" })
+      }
+      res.status(200).json({
+          transactions
+      })
+    } catch (error) {
+      res.status(500).json({ message: 'Impossible de lire les lignes', error: error.message })
+  
+    }
+  }
+  
+  exports.create = async (req, res) => {
   const { accountId } = req.params
   try {
     const newTransaction = new Transaction({
@@ -11,24 +70,6 @@ exports.create = async (req, res) => {
     res.status(201).json(newTransaction)
   } catch (error) {
     res.status(500).json({ message: 'Impossible de créer la ligne', error: error.message })
-  }
-}
-
-exports.readAllByAccount = async (req, res) => {
-  const { accountId } = req.params
-  try {
-    const transactions = await Transaction.find({ accountId }).populate('accountId')
-    transactions.forEach(transaction => {
-      if (transaction.accountId.userId.toString() !== req.auth.userId) {
-        res.status(401).json({ message: 'Requête non autorisée' })
-      }
-    })
-    res.status(200).json({
-        transactions
-    })
-  } catch (error) {
-    res.status(500).json({ message: 'Impossible de lire les lignes', error: error.message })
-
   }
 }
 
