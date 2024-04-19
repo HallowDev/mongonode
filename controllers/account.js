@@ -15,12 +15,10 @@ exports.create = async (req, res) => {
   try {
     const { bankName, customName } = req.body;
     const userId = req.auth.userId;
-    const lastUpdated = Date.now();
     
     const newAccount = new Account({
       bankName,
       customName,
-      lastUpdated,
       userId
     });
 
@@ -40,7 +38,6 @@ exports.update = async (req, res) => {
   try {
     const accountId = req.params.id;
     const { bankName, customName } = req.body;
-    const lastUpdated = Date.now();
 
     let account = await Account.findById(accountId);
 
@@ -54,7 +51,7 @@ exports.update = async (req, res) => {
 
     account = await Account.findByIdAndUpdate(
       accountId,
-      { $set: { bankName, customName, lastUpdated } },
+      { $set: { bankName, customName } },
       { new: true }
     );
 

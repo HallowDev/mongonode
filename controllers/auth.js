@@ -6,7 +6,7 @@ exports.signup = async (req, res) => {
   try {
     const {name, email, password} = req.body
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log(hashedPassword)
+    //console.log(hashedPassword)
     const user = new User({
       name: name,
       email: email,

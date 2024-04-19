@@ -49,6 +49,11 @@ const transactionSchema = new mongoose.Schema({
   },
 });
 
+transactionSchema.pre('save', async function (next) {
+  this.lastUpdated = Date.now()
+  next()
+})
+
 transactionSchema.plugin(uniqueValidator, { message: '{PATH} doit être unique.' });
 const Transaction = mongoose.model('Transaction', transactionSchema);
 
