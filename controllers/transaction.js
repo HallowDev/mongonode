@@ -38,9 +38,7 @@ exports.readAllByAccount = async (req, res) => {
     try {
       const transactions = await checkUserAccess(
         {
-            accountId: mongoose.Types.ObjectId.createFromHexString(
-                accountId
-            )
+            accountId: mongoose.Types.ObjectId.createFromHexString(accountId)
         },
         req.auth.userId
       )
