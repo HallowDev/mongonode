@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Veuillez fournir un mot de passe"],
     minlength: [6, "Le mot de passe doit comporter au moins 6 caractères"],
-    validate: {
+    /*validate: {
       validator: (value) => {
         const re =
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[a-zA-Z\d!@#$%^&*]{6,}$/;
@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
       },
       message:
         "Le mot de passe ne peut pas contenir le mot 'password', et doit comporter au moins 6 caractères, une lettre majuscule, un chiffre et un caractère spécial",
-    },
+    },*/
   },
 });
 

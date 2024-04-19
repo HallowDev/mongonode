@@ -4,22 +4,16 @@ const User = require('../models/user');
 
 exports.signup = async (req, res) => {
   try {
-    const existingUser = await User.findOne({ email: req.body.email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'Email déjà existant' });
-    }
-
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-
-    const newUser = await User.create({
-      name: req.body.name,
-      email: req.body.email,
+    const {name, email, password} = req.body
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log(hashedPassword)
+    const user = new User({
+      name: name,
+      email: email,
       password: hashedPassword
     });
-
-    const token = jwt.sign({ userId: newUser._id }, process.env.TOKEN_SECRET);
-
-    res.status(201).json({ token });
+    await user.save()
+    res.status(201).json({ message: 'Enregistrement réussi !' });
   } catch (error) {
     res.status(500).json({ message: 'Enregistrement impossible', error });
   }
@@ -39,7 +33,7 @@ exports.login = async (req, res) => {
 
     const token = jwt.sign({ userId: user._id }, process.env.TOKEN_SECRET);
 
-    res.status(200).json({ token });
+    res.status(200).json({ token, user });
   } catch (error) {
     console.log(error)
     res.status(500).json({ message: 'Connexion impossible', error });
