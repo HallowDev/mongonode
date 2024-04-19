@@ -55,7 +55,7 @@ exports.update = async (req, res) => {
       { new: true }
     );
 
-    res.json(account);
+    res.status(201).json(account);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Erreur Serveur');
@@ -78,7 +78,7 @@ exports.delete = async (req, res) => {
 
     await Account.findByIdAndDelete(accountId);
 
-    res.json({ message: 'Compte supprimé' });
+    res.status(201).json({ message: 'Compte supprimé' });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Erreur Serveur');
