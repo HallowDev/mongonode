@@ -45,7 +45,7 @@ exports.update = async (req, res) => {
       return res.status(404).json({ message: 'Compte non trouvé' });
     }
 
-    if (account.user.toString() !== req.auth.userId) {
+    if (account.userId.toString() !== req.auth.userId) {
       return res.status(401).json({ message: 'Non autorisé' });
     }
 
@@ -72,11 +72,11 @@ exports.delete = async (req, res) => {
       return res.status(404).json({ message: 'Compte non trouvé' });
     }
 
-    if (account.user.toString() !== req.auth.userId) {
+    if (account.userId.toString() !== req.auth.userId) {
       return res.status(401).json({ message: 'Non autorisé' });
     }
 
-    await Account.findByIdAndRemove(accountId);
+    await Account.findByIdAndDelete(accountId);
 
     res.json({ message: 'Compte supprimé' });
   } catch (err) {
