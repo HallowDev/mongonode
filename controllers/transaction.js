@@ -15,7 +15,7 @@ const checkUserAccess = async (match, userId) => {
             },
         },
         {
-            $unwind: "accountDetails",
+            $unwind: "$accountDetails",
         },
         {
             $match: {
@@ -46,6 +46,7 @@ exports.readAllByAccount = async (req, res) => {
         },
         req.auth.userId
       )
+      console.log(transactions)
 
       if (!transactions) {
         return res.status(404).json({ message: "Aucune ligne récupérable" })
@@ -95,7 +96,7 @@ exports.delete = async (req, res) => {
     if (!account) {
       return res.status(404).json({ message: 'Ligne non trouvée' })
     }
-    res.status(204).json({ message: 'la ligne a bien étée supprimée' })
+    res.status(204).send()
   } catch (error) {
     res.status(500).json({ message: 'Impossible de supprimer la ligne', error: error.message })
   }
